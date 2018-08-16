@@ -15,7 +15,7 @@ class LibpngConan(ConanFile):
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False]}
-    default_options = "shared=False"
+    default_options = "shared=True"
     exports = [
         "patches/CMakeProjectWrapper.txt",
         "patches/skip-install-symlink.patch"
