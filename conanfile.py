@@ -25,6 +25,9 @@ class LibpngConan(ConanFile):
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
 
+    def configure(self):
+        del self.settings.compiler.libcxx
+
     def source(self):
         tools.get("https://github.com/glennrp/libpng/archive/v{0}.tar.gz".format(self.version))
         os.rename("libpng-" + self.version, self.source_subfolder)
