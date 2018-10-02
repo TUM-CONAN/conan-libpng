@@ -44,6 +44,8 @@ class LibpngConan(ConanFile):
         cmake.definitions["SKIP_INSTALL_PROGRAMS"] = "ON"
         cmake.definitions["SKIP_INSTALL_EXECUTABLES"] = "ON"
         cmake.definitions["SKIP_INSTALL_SYMLINK"] = "ON"
+        if not tools.os_info.is_windows:
+            cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = "ON"
         cmake.configure(build_folder=self.build_subfolder)
         cmake.build()
         cmake.install()
