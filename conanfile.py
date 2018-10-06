@@ -20,7 +20,7 @@ class LibpngConan(ConanFile):
         "patches/CMakeProjectWrapper.txt",
         "patches/skip-install-symlink.patch"
     ]
-    requires = "zlib/1.2.11@fw4spl/stable"
+    requires = "zlib/1.2.11@sight/stable"
     url = "https://gitlab.lan.local/conan/conan-libpng"
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
