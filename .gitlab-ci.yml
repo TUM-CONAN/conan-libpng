@@ -1,7 +1,6 @@
 variables:
   CONAN_REFERENCE: "libpng/1.6.34"
-  CONAN_USERNAME: "sigth"
-  CONAN_LOGIN_USERNAME: "sight"
+  CONAN_USERNAME: "sight"
   CONAN_CHANNEL: "stable"
   CONAN_STABLE_BRANCH_PATTERN: "stable/*"
   CONAN_UPLOAD_ONLY_WHEN_STABLE: 1
@@ -27,3 +26,13 @@ msvc2017:
   tags:
     - docker
     - windows
+    
+macos:
+  stage: build
+  variables:
+    CONAN_APPLE_CLANG_VERSIONS: "9.1"
+    CONAN_USER_HOME: $CI_PROJECT_DIR
+  script:
+    - python3 build.py
+  tags:
+    - macos
