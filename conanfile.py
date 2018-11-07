@@ -20,13 +20,16 @@ class LibpngConan(ConanFile):
         "patches/CMakeProjectWrapper.txt",
         "patches/skip-install-symlink.patch"
     ]
-    requires = "zlib/1.2.11@sight/stable"
     url = "https://gitlab.lan.local/conan/conan-libpng"
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
 
     def configure(self):
         del self.settings.compiler.libcxx
+        
+    def requirements(self):
+        if tools.os_info.is_windows:
+            self.requires("zlib/1.2.11@sight/stable")
 
     def source(self):
         tools.get("https://github.com/glennrp/libpng/archive/v{0}.tar.gz".format(self.version))
