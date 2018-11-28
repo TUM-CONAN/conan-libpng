@@ -20,7 +20,7 @@ class LibpngConan(ConanFile):
         "patches/CMakeProjectWrapper.txt",
         "patches/skip-install-symlink.patch"
     ]
-    url = "https://gitlab.lan.local/conan/conan-libpng"
+    url = "https://git.ircad.fr/conan/conan-libpng"
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
 
