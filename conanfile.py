@@ -8,7 +8,10 @@ from conans import ConanFile, tools, CMake
 
 class LibpngConan(ConanFile):
     name = "libpng"
-    version = "1.6.34"
+    upstream_version = "1.6.34"
+    package_revision = "-r1"
+    version = "{0}{1}".format(upstream_version, package_revision)
+
     description = "libpng is the official PNG file format reference library."
     homepage = "http://www.libpng.org"
     license = "http://www.libpng.org/pub/png/src/libpng-LICENSE.txt"
@@ -29,11 +32,11 @@ class LibpngConan(ConanFile):
         
     def requirements(self):
         if tools.os_info.is_windows:
-            self.requires("zlib/1.2.11@sight/stable")
+            self.requires("zlib/1.2.11-r1@sight/testing")
 
     def source(self):
-        tools.get("https://github.com/glennrp/libpng/archive/v{0}.tar.gz".format(self.version))
-        os.rename("libpng-" + self.version, self.source_subfolder)
+        tools.get("https://github.com/glennrp/libpng/archive/v{0}.tar.gz".format(self.upstream_version))
+        os.rename("libpng-" + self.upstream_version, self.source_subfolder)
 
     def build(self):
         libpng_source_dir = os.path.join(self.source_folder, self.source_subfolder)
