@@ -49,7 +49,7 @@ class LibpngConan(ConanFile):
         cmake.definitions["PNG_DEBUG"] = "OFF" if self.settings.build_type == "Release" else "ON"
         cmake.definitions["SKIP_INSTALL_PROGRAMS"] = "ON"
         cmake.definitions["SKIP_INSTALL_EXECUTABLES"] = "ON"
-        if tools.os_info.is_windows:
+        if tools.os_info.is_windows or tools.os_info.is_macos:
             cmake.definitions["SKIP_INSTALL_SYMLINK"] = "ON"            
         else:
             cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = "ON"
