@@ -9,7 +9,7 @@ from conans import ConanFile, tools, CMake
 class LibpngConan(ConanFile):
     name = "libpng"
     upstream_version = "1.6.34"
-    package_revision = "-r2"
+    package_revision = "-r3"
     version = "{0}{1}".format(upstream_version, package_revision)
 
     description = "libpng is the official PNG file format reference library."
@@ -31,9 +31,9 @@ class LibpngConan(ConanFile):
         del self.settings.compiler.libcxx
         
     def requirements(self):
-        self.requires("common/1.0.0@sight/stable")
+        self.requires("common/1.0.1@sight/testing")
         if tools.os_info.is_windows:
-            self.requires("zlib/1.2.11-r2@sight/stable")
+            self.requires("zlib/1.2.11-r3@sight/testing")
 
     def source(self):
         tools.get("https://github.com/glennrp/libpng/archive/v{0}.tar.gz".format(self.upstream_version))
