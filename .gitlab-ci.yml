@@ -1,30 +1,13 @@
-variables:
-  CONAN_COMMIT_REF_NAME: $CI_COMMIT_REF_NAME
-  CONAN_PROJECT_NAME: $CI_PROJECT_NAME
-
 stages:
+  - lint
   - build
 
-before_script:
-  - git -c http.sslVerify=false clone --depth 1 https://gitlab-ci-token:${CI_JOB_TOKEN}@git.ircad.fr/conan/conan.git
-
-msvc2017:
-  stage: build
-  variables:
-    CONAN_VISUAL_VERSIONS: "15"
-    CONAN_USER_HOME: $CI_PROJECT_DIR
-  script:
-    - python conan/gitlab-ci/build.py
-  tags:
-    - shell
-    - windows
-
-macos-mojave:
-  stage: build
-  variables:
-    CONAN_APPLE_CLANG_VERSIONS: "10.0"
-    CONAN_USER_HOME: $CI_PROJECT_DIR
-  script:
-    - python3 conan/gitlab-ci/build.py
-  tags:
-    - mojave
+include:
+  # Python linter jobs
+  - remote: 'https://git.ircad.fr/conan/conan/raw/dev/gitlab-ci/jobs/lint-flake8.yml'
+  # MSVC 2017 jobs
+  - remote: 'https://git.ircad.fr/conan/conan/raw/dev/gitlab-ci/jobs/msvc2017/build-msvc2017.yml'
+  # MSVC 2019 jobs
+  - remote: 'https://git.ircad.fr/conan/conan/raw/dev/gitlab-ci/jobs/msvc2019/build-msvc2019.yml'
+    # macOS Mojave jobs
+  - remote: 'https://git.ircad.fr/conan/conan/raw/dev/gitlab-ci/jobs/macos-mojave/build-macos-mojave.yml'
