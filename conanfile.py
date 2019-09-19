@@ -20,12 +20,10 @@ class LibpngConan(ConanFile):
     options = {"shared": [True, False]}
     default_options = "shared=True"
     exports = [
-        "patches/CMakeProjectWrapper.txt",
         "patches/skip-install-symlink.patch"
     ]
     url = "https://git.ircad.fr/conan/conan-libpng"
     source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
 
     def configure(self):
         del self.settings.compiler.libcxx
@@ -40,19 +38,21 @@ class LibpngConan(ConanFile):
         os.rename("libpng-" + self.upstream_version, self.source_subfolder)
 
     def build(self):
+        libpng_source_dir = os.path.join(self.source_folder, self.source_subfolder)
+        tools.patch(libpng_source_dir, "patches/skip-install-symlink.patch")
+
         # Import common flags and defines
         import common
 
-        libpng_source_dir = os.path.join(self.source_folder, self.source_subfolder)
-        shutil.move("patches/CMakeProjectWrapper.txt", "CMakeLists.txt")
-        tools.patch(libpng_source_dir, "patches/skip-install-symlink.patch")
-        cmake = CMake(self)
+        # Generate Cmake wrapper
+        common.generate_cmake_wrapper(
+            cmakelists_path='CMakeLists.txt',
+            source_subfolder=self.source_subfolder,
+            build_type=self.settings.build_type
+        )
 
-        # Export common flags
-        cmake.definitions["SIGHT_CMAKE_CXX_FLAGS"] = common.get_cxx_flags()
-        cmake.definitions["SIGHT_CMAKE_CXX_FLAGS_RELEASE"] = common.get_cxx_flags_release()
-        cmake.definitions["SIGHT_CMAKE_CXX_FLAGS_DEBUG"] = common.get_cxx_flags_debug()
-        cmake.definitions["SIGHT_CMAKE_CXX_FLAGS_RELWITHDEBINFO"] = common.get_cxx_flags_relwithdebinfo()
+        cmake = CMake(self)
+        cmake.verbose = True
 
         cmake.definitions["PNG_TESTS"] = "OFF"
         cmake.definitions["PNG_SHARED"] = self.options.shared
@@ -65,7 +65,7 @@ class LibpngConan(ConanFile):
         else:
             cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = "ON"
 
-        cmake.configure(build_folder=self.build_subfolder)
+        cmake.configure()
         cmake.build()
         cmake.install()
 
