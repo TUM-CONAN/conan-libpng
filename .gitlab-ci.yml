@@ -9,5 +9,5 @@ include:
   - remote: 'https://git.ircad.fr/conan/conan/raw/dev/gitlab-ci/jobs/msvc2017/build-msvc2017.yml'
   # MSVC 2019 jobs
   - remote: 'https://git.ircad.fr/conan/conan/raw/dev/gitlab-ci/jobs/msvc2019/build-msvc2019.yml'
-    # macOS Mojave jobs
-  - remote: 'https://git.ircad.fr/conan/conan/raw/dev/gitlab-ci/jobs/macos-mojave/build-macos-mojave.yml'
+  # macOS apple-clang 11.0 jobs
+  - remote: 'https://git.ircad.fr/conan/conan/raw/dev/gitlab-ci/jobs/apple-clang-11.0/build-apple-clang-11.0.yml'
