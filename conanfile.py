@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import os
-import shutil
 from conans import ConanFile, tools, CMake
 
 
 class LibpngConan(ConanFile):
     name = "libpng"
     upstream_version = "1.6.34"
-    package_revision = "-r2"
+    package_revision = "-r3"
     version = "{0}{1}".format(upstream_version, package_revision)
 
     description = "libpng is the official PNG file format reference library."
@@ -20,38 +19,39 @@ class LibpngConan(ConanFile):
     options = {"shared": [True, False]}
     default_options = "shared=True"
     exports = [
-        "patches/CMakeProjectWrapper.txt",
         "patches/skip-install-symlink.patch"
     ]
     url = "https://git.ircad.fr/conan/conan-libpng"
     source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
 
     def configure(self):
         del self.settings.compiler.libcxx
-        
+
     def requirements(self):
-        self.requires("common/1.0.0@sight/stable")
+        self.requires("common/1.0.1@sight/stable")
         if tools.os_info.is_windows:
-            self.requires("zlib/1.2.11-r2@sight/stable")
+            self.requires("zlib/1.2.11-r3@sight/stable")
 
     def source(self):
         tools.get("https://github.com/glennrp/libpng/archive/v{0}.tar.gz".format(self.upstream_version))
         os.rename("libpng-" + self.upstream_version, self.source_subfolder)
 
     def build(self):
+        libpng_source_dir = os.path.join(self.source_folder, self.source_subfolder)
+        tools.patch(libpng_source_dir, "patches/skip-install-symlink.patch")
+
         # Import common flags and defines
         import common
 
-        libpng_source_dir = os.path.join(self.source_folder, self.source_subfolder)
-        shutil.move("patches/CMakeProjectWrapper.txt", "CMakeLists.txt")
-        tools.patch(libpng_source_dir, "patches/skip-install-symlink.patch")
+        # Generate Cmake wrapper
+        common.generate_cmake_wrapper(
+            cmakelists_path='CMakeLists.txt',
+            source_subfolder=self.source_subfolder,
+            build_type=self.settings.build_type
+        )
+
         cmake = CMake(self)
-        
-        # Set common flags
-        cmake.definitions["SIGHT_CMAKE_C_FLAGS"] = common.get_c_flags()
-        cmake.definitions["SIGHT_CMAKE_CXX_FLAGS"] = common.get_cxx_flags()
-        
+
         cmake.definitions["PNG_TESTS"] = "OFF"
         cmake.definitions["PNG_SHARED"] = self.options.shared
         cmake.definitions["PNG_STATIC"] = not self.options.shared
@@ -59,11 +59,11 @@ class LibpngConan(ConanFile):
         cmake.definitions["SKIP_INSTALL_PROGRAMS"] = "ON"
         cmake.definitions["SKIP_INSTALL_EXECUTABLES"] = "ON"
         if tools.os_info.is_windows or tools.os_info.is_macos:
-            cmake.definitions["SKIP_INSTALL_SYMLINK"] = "ON"            
+            cmake.definitions["SKIP_INSTALL_SYMLINK"] = "ON"
         else:
             cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = "ON"
-            
-        cmake.configure(build_folder=self.build_subfolder)
+
+        cmake.configure()
         cmake.build()
         cmake.install()
 
