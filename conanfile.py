@@ -28,9 +28,9 @@ class LibpngConan(ConanFile):
         del self.settings.compiler.libcxx
 
     def requirements(self):
-        self.requires("common/1.0.2@sight/testing")
+        self.requires("common/1.0.2@sight/stable")
         if tools.os_info.is_windows:
-            self.requires("zlib/1.2.11-r4@sight/testing")
+            self.requires("zlib/1.2.11-r4@sight/stable")
 
     def source(self):
         tools.get("https://github.com/glennrp/libpng/archive/v{0}.tar.gz".format(self.upstream_version))
