@@ -28,9 +28,9 @@ class LibpngConan(ConanFile):
         del self.settings.compiler.libcxx
 
     def requirements(self):
-        self.requires("common/1.0.2@sight/stable")
+        self.requires("ircad_common/1.0.2@camposs/stable")
         if tools.os_info.is_windows:
-            self.requires("zlib/1.2.11-r4@sight/stable")
+            self.requires("zlib/1.2.11@camposs/stable")
 
     def source(self):
         tools.get("https://github.com/glennrp/libpng/archive/v{0}.tar.gz".format(self.upstream_version))
