@@ -6,6 +6,9 @@ from conans import ConanFile, tools, CMake
 
 
 class LibpngConan(ConanFile):
+    python_requires = "camp_common/[>=0.1]@camposs/stable"
+    python_requires_extend = "camp_common.CampCMakeBase"
+
     name = "libpng"
     upstream_version = "1.6.34"
     package_revision = "-r4"
@@ -28,20 +31,19 @@ class LibpngConan(ConanFile):
         del self.settings.compiler.libcxx
 
     def requirements(self):
-        self.requires("ircad_common/1.0.2@camposs/stable")
         if tools.os_info.is_windows:
-            self.requires("zlib/1.2.11@camposs/stable")
+            self.requires("zlib/1.2.11-r1@camposs/stable")
 
     def source(self):
         tools.get("https://github.com/glennrp/libpng/archive/v{0}.tar.gz".format(self.upstream_version))
         os.rename("libpng-" + self.upstream_version, self.source_subfolder)
 
-    def build(self):
+    def _before_configure(self):
         libpng_source_dir = os.path.join(self.source_folder, self.source_subfolder)
         tools.patch(libpng_source_dir, "patches/skip-install-symlink.patch")
 
         # Import common flags and defines
-        import common
+        common = self.python_requires["camp_common"].module
 
         # Generate Cmake wrapper
         common.generate_cmake_wrapper(
@@ -50,8 +52,7 @@ class LibpngConan(ConanFile):
             build_type=self.settings.build_type
         )
 
-        cmake = CMake(self)
-
+    def _before_build(self, cmake):
         cmake.definitions["PNG_TESTS"] = "OFF"
         cmake.definitions["PNG_SHARED"] = self.options.shared
         cmake.definitions["PNG_STATIC"] = not self.options.shared
@@ -62,10 +63,3 @@ class LibpngConan(ConanFile):
             cmake.definitions["SKIP_INSTALL_SYMLINK"] = "ON"
         else:
             cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = "ON"
-
-        cmake.configure()
-        cmake.build()
-        cmake.install()
-
-    def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
