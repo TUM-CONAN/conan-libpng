@@ -11,7 +11,7 @@ class LibpngConan(ConanFile):
 
     name = "libpng"
     upstream_version = "1.6.34"
-    package_revision = "-r4"
+    package_revision = "-r5"
     version = "{0}{1}".format(upstream_version, package_revision)
 
     description = "libpng is the official PNG file format reference library."
